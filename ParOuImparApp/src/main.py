@@ -2,19 +2,37 @@ import flet as ft
 
 def main(page: ft.Page):
     # ----- Event Listener -----
+    def close_dialog(e):
+        page.pop_dialog()
+        page.update()
+
     def on_click_send(e):
         value = input_txt.value
         try:
             int_value = int(value)
-            number = int(value)
-            if (int_value % 2) == 0:
-                output_txt.value += f'{number} é par.\n'
+            output_txt = ft.Text(value = '')
+            if (int_value % 2 == 0):
+                output_txt.value = f'{int_value} é par.'
             else:
-                output_txt.value += f'{number} é ímpar.\n'
+                output_txt.value = f'{int_value} é ímpar.'
+            output_col.controls.append(output_txt)
         except ValueError:
-            output_txt.value += f'"{value}" não é um número inteiro.\n'
+            if(value.strip() == ''):
+                dialog.content.value = 'Digite um número inteiro válido.'
+            else:
+                dialog.content.value = f'"{value}" não é um número inteiro.'
+            page.show_dialog(dialog)
         input_txt.value = ''
+        page.update()
+
     # ----- Widgets -----
+    dialog = ft.AlertDialog(
+        title=ft.Text('Erro'),
+        content=ft.Text('Digite um número inteiro válido.'),
+        actions=[
+            ft.TextButton('OK', on_click=close_dialog)
+        ]
+    )
     input_txt = ft.TextField(
         expand=True,    
         hint_text='Digite um número inteiro...'
@@ -34,7 +52,7 @@ def main(page: ft.Page):
         expand=True,
         horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
         scroll= ft.ScrollMode.ALWAYS,
-        controls=[output_txt]
+        controls=[]
     )
     main_col = ft.Column(
         expand=True,
@@ -47,3 +65,5 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     ft.run(main)
+
+
